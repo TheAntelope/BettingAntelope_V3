@@ -65,6 +65,7 @@ def rename_team_str(team):
         'San Diego Chargers': 'LAC',
         'DEN Broncos' : 'DEN',
         'LA Chargers' : 'LAC',
+        'LAC Chargers' : 'LAC',
         "KAN":"KC",
         "LVR":"LV",
         
