@@ -1,0 +1,40 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS SAM template for scrape_odds Lambda function.
+Resources:
+  scrapeodds:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: scrapeodds
+      Description: Scrapes odds and updates Supabase.
+      MemorySize: 128
+      Timeout: 300
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.12
+      Architectures:
+      - arm64
+      Environment:
+        Variables:
+          ODDS_TABLE: Odds
+          SUPABASE_SERVICE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tYnVoY211dHR0eHhqc3lqZXJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5NzUxNTUsImV4cCI6MjA3MTU1MTE1NX0._SsqZCRWM-e77gqxsrZSuw1OPvIIpYxFoNFsPkBx_Gc
+          SUPABASE_URL: https://ombuhcmutttxxjsyjerf.supabase.co
+      PackageType: Zip
+      Policies:
+      - Statement:
+        - Effect: Allow
+          Action:
+          - logs:CreateLogGroup
+          Resource: arn:aws:logs:us-east-2:889593133909:*
+        - Effect: Allow
+          Action:
+          - logs:CreateLogStream
+          - logs:PutLogEvents
+          Resource:
+          - arn:aws:logs:us-east-2:889593133909:log-group:/aws/lambda/nfl-results:*
+      RecursiveLoop: Terminate
+      SnapStart:
+        ApplyOn: None
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: Auto
+    Metadata:
+      SamResourceId: scrapeodds

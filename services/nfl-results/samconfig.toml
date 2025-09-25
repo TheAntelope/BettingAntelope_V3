@@ -1,0 +1,11 @@
+version = 0.1
+
+[default.deploy.parameters]
+stack_name = "lambda-results-nfl-deploy"
+resolve_s3 = true
+s3_prefix = "lambda-results-nfl-deploy"
+region = "us-east-1"
+confirm_changeset = true
+capabilities = "CAPABILITY_IAM"
+disable_rollback = true
+image_repositories = []

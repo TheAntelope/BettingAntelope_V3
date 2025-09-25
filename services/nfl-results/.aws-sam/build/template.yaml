@@ -1,0 +1,46 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: An AWS Serverless Application Model template describing your function.
+Resources:
+  nflresults:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: nflresults
+      Description: ''
+      MemorySize: 128
+      Timeout: 30
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.12
+      Architectures:
+      - arm64
+      EphemeralStorage:
+        Size: 512
+      Environment:
+        Variables:
+          ODDS_TABLE: Odds
+          RESULTS_TABLE: Results_V2
+          SUPABASE_SERVICE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tYnVoY211dHR0eHhqc3lqZXJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5NzUxNTUsImV4cCI6MjA3MTU1MTE1NX0._SsqZCRWM-e77gqxsrZSuw1OPvIIpYxFoNFsPkBx_Gc
+          SUPABASE_URL: https://ombuhcmutttxxjsyjerf.supabase.co
+      EventInvokeConfig:
+        MaximumEventAgeInSeconds: 21600
+        MaximumRetryAttempts: 2
+      PackageType: Zip
+      Policies:
+      - Statement:
+        - Effect: Allow
+          Action:
+          - logs:CreateLogGroup
+          Resource: arn:aws:logs:us-east-2:889593133909:*
+        - Effect: Allow
+          Action:
+          - logs:CreateLogStream
+          - logs:PutLogEvents
+          Resource:
+          - arn:aws:logs:us-east-2:889593133909:log-group:/aws/lambda/nfl-results:*
+      RecursiveLoop: Terminate
+      SnapStart:
+        ApplyOn: None
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: Auto
+    Metadata:
+      SamResourceId: nflresults
