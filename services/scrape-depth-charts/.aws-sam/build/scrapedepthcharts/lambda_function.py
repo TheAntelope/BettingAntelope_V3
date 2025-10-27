@@ -5,6 +5,8 @@ import os
 import time
 from datetime import datetime as dt
 from datetime import datetime
+from datetime import date
+from collections.abc import Mapping, Sequence
 from typing import Any, Dict, Iterable, Iterator, List, Optional
 
 import supabase
@@ -14,6 +16,7 @@ import pandas as pd
 
 DEPTH_CHART_PAGE = "https://cdn.espn.com/core/nfl/team/depth/_/name/{team_code}?xhr=1"
 NFL_TEAM_CODES = [
+    "WAS",
     "ARI",
     "ATL",
     "BAL",
@@ -45,7 +48,7 @@ NFL_TEAM_CODES = [
     "SEA",
     "TB",
     "TEN",
-    "WAS",
+    
 ]
 
 SUPABASE_URL = os.environ["SUPABASE_URL"].rstrip("/")
@@ -376,6 +379,20 @@ def serialize_datetimes(obj):
         return obj
 
 
+
+def to_jsonable(obj):
+    if obj is None or isinstance(obj, (int, float, str, bool)):
+        return obj
+    if isinstance(obj, (datetime, date)):
+        return obj.isoformat()
+    if isinstance(obj, set) or isinstance(obj, tuple) or (isinstance(obj, list)):
+        return [to_jsonable(x) for x in obj]
+    if isinstance(obj, Mapping):
+        return {str(k): to_jsonable(v) for k, v in obj.items()}
+    # fallback
+    return str(obj)
+
+
 def lambda_handler(event, context):  # pragma: no cover - entry point for AWS Lambda
     print("Lambda handler started")
 
@@ -389,6 +406,7 @@ def lambda_handler(event, context):  # pragma: no cover - entry point for AWS La
         upload_dict = build_depth_chart(roster_df)
         upload_dict = serialize_datetimes(upload_dict)
         upload_dict["team"] = team
+        upload_dict = to_jsonable(upload_dict)
         print(upload_dict)
 
         # upload to supabase
