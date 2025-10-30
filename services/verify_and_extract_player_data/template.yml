@@ -1,0 +1,44 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: AWS SAM template for verifying and extracting player data into Supabase.
+Resources:
+  verifyandextractplayerdata:
+    Type: AWS::Serverless::Function
+    Properties:
+      CodeUri: ./src
+      Description: Verifies NFL player metadata and syncs stats to Supabase.
+      MemorySize: 512
+      Timeout: 600
+      Handler: lambda_function.lambda_handler
+      Runtime: python3.12
+      Architectures:
+        - arm64
+      Events:
+        VerifyPlayerAPI:
+          Type: Api
+          Properties:
+            Path: /verify-player
+            Method: post
+      Environment:
+        Variables:
+          SUPABASE_URL: https://ombuhcmutttxxjsyjerf.supabase.co
+          SUPABASE_SERVICE_KEY: >-
+            eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tYnVoY211dHR0eHhqc3lqZXJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5NzUxNTUsImV4cCI6MjA3MTU1MTE1NX0._SsqZCRWM-e77gqxsrZSuw1OPvIIpYxFoNFsPkBx_Gc
+      PackageType: Zip
+      Policies:
+        - Statement:
+            - Effect: Allow
+              Action:
+                - logs:CreateLogGroup
+              Resource: arn:aws:logs:us-east-2:889593133909:*
+            - Effect: Allow
+              Action:
+                - logs:CreateLogStream
+                - logs:PutLogEvents
+              Resource:
+                - arn:aws:logs:us-east-2:889593133909:log-group:/aws/lambda/verify-and-extract-player-data:*
+      RecursiveLoop: Terminate
+      SnapStart:
+        ApplyOn: None
+      RuntimeManagementConfig:
+        UpdateRuntimeOn: Auto
