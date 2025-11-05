@@ -1,0 +1,9 @@
+# Third-party dependencies for the player data verification Lambda.
+supabase
+pandas
+requests
+pyyaml
+beautifulsoup4
+lxml
+Levenshtein
+boto3
