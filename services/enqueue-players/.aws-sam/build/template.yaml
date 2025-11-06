@@ -1,0 +1,84 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Enqueue NFL player scraping tasks from Depth Charts (daily)
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 120
+    MemorySize: 512
+    Architectures:
+    - x86_64
+    Environment:
+      Variables:
+        SUPABASE_URL:
+          Ref: SupabaseUrl
+        SUPABASE_KEY:
+          Ref: SupabaseKey
+        PLAYER_QUEUE_URL:
+          Ref: PlayerQueue
+Parameters:
+  SupabaseUrl:
+    Type: String
+    Description: Supabase project URL
+  SupabaseKey:
+    Type: String
+    Description: Supabase service role key (or anon key if read-only)
+Resources:
+  PlayerDLQ:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: player-scrape-dlq
+      MessageRetentionPeriod: 1209600
+  PlayerQueue:
+    Type: AWS::SQS::Queue
+    Properties:
+      QueueName: player-scrape-queue
+      VisibilityTimeout: 120
+      RedrivePolicy:
+        deadLetterTargetArn:
+          Fn::GetAtt:
+          - PlayerDLQ
+          - Arn
+        maxReceiveCount: 3
+  EnqueuePlayersFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      Handler: src/lambda_function.lambda_handler
+      Description: Queries Supabase Depth Charts and enqueues players for scraping
+      Policies:
+      - Statement:
+        - Effect: Allow
+          Action:
+          - sqs:SendMessage
+          Resource:
+            Fn::GetAtt:
+            - PlayerQueue
+            - Arn
+      Events:
+        DailySchedule:
+          Type: Schedule
+          Properties:
+            Name: enqueue-daily
+            Description: Run enqueue lambda once per day
+            Schedule: cron(0 5 * * ? *)
+            Enabled: true
+      CodeUri: EnqueuePlayersFunction
+    Metadata:
+      SamResourceId: EnqueuePlayersFunction
+Outputs:
+  EnqueuePlayersFunction:
+    Description: Enqueue Lambda function ARN
+    Value:
+      Fn::GetAtt:
+      - EnqueuePlayersFunction
+      - Arn
+  PlayerQueueUrl:
+    Description: SQS Queue URL
+    Value:
+      Ref: PlayerQueue
+  PlayerQueueArn:
+    Description: SQS Queue ARN
+    Value:
+      Fn::GetAtt:
+      - PlayerQueue
+      - Arn

@@ -403,6 +403,8 @@ def lambda_handler(event, context):  # pragma: no cover - entry point for AWS La
         roster_df = create_roster_df(team)
         print(roster_df.sort_values(by=['Position', 'Name']))
 
+        # build depth chart dict
+        upload_dict = {}
         upload_dict = build_depth_chart(roster_df)
         upload_dict = serialize_datetimes(upload_dict)
         upload_dict["team"] = team
