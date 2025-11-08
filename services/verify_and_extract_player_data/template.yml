@@ -14,16 +14,18 @@ Resources:
       Architectures:
         - arm64
       Events:
-        VerifyPlayerAPI:
-          Type: Api
+        PlayerQueueEvent:
+          Type: SQS
           Properties:
-            Path: /verify-player
-            Method: post
+            Queue: arn:aws:sqs:us-east-1:889593133909:player-scrape-queue
+            BatchSize: 5
+            MaximumBatchingWindowInSeconds: 10
       Environment:
         Variables:
           SUPABASE_URL: https://ombuhcmutttxxjsyjerf.supabase.co
           SUPABASE_SERVICE_KEY: >-
             eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tYnVoY211dHR0eHhqc3lqZXJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5NzUxNTUsImV4cCI6MjA3MTU1MTE1NX0._SsqZCRWM-e77gqxsrZSuw1OPvIIpYxFoNFsPkBx_Gc
+          PLAYER_QUEUE_URL: https://sqs.us-east-1.amazonaws.com/889593133909/player-scrape-queue
       PackageType: Zip
       Policies:
         - Statement:
@@ -37,8 +39,21 @@ Resources:
                 - logs:PutLogEvents
               Resource:
                 - arn:aws:logs:us-east-2:889593133909:log-group:/aws/lambda/verify-and-extract-player-data:*
+            - Effect: Allow
+              Action:
+                - sqs:ReceiveMessage
+                - sqs:DeleteMessage
+                - sqs:GetQueueAttributes
+              Resource: arn:aws:sqs:us-east-1:889593133909:player-scrape-queue
       RecursiveLoop: Terminate
       SnapStart:
         ApplyOn: None
       RuntimeManagementConfig:
         UpdateRuntimeOn: Auto
+Outputs:
+  PlayerStatsQueueUrl:
+    Description: URL of the player stats queue
+    Value: https://sqs.us-east-1.amazonaws.com/889593133909/player-scrape-queue
+  PlayerStatsQueueArn:
+    Description: ARN of the player stats queue
+    Value: arn:aws:sqs:us-east-1:889593133909:player-scrape-queue

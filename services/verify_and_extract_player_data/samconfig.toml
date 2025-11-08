@@ -1,9 +1,9 @@
 version = 0.1
 
 [default.deploy.parameters]
-stack_name = "verify-and-extract-player-data"
+stack_name = "verify-and-extract-player-data-v2"
 resolve_s3 = true
-s3_prefix = "verify-and-extract-player-data"
+s3_prefix = "verify-and-extract-player-data-v2"
 region = "us-east-1"
 confirm_changeset = true
 capabilities = "CAPABILITY_IAM"

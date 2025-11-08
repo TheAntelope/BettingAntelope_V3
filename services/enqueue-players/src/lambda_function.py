@@ -2,6 +2,7 @@ import os
 import json
 import boto3
 from datetime import datetime, timezone
+from datetime import datetime as dt
 from itertools import islice
 from supabase import create_client, Client
 
@@ -61,6 +62,8 @@ def _distinct_teams():
     res = sb.table(TABLE).select("team").execute()
     return sorted({r["team"] for r in (res.data or []) if r.get("team")})
 
+
+
 def _latest_row_for_team(team: str):
     q = (
         sb.table(TABLE)
@@ -73,9 +76,24 @@ def _latest_row_for_team(team: str):
     rows = res.data or []
     return rows[0] if rows else None
 
+def get_nfl_season(today=None):
+    """
+    Returns the NFL season year as an integer for a given date.
+    If no date is provided, uses today's date.
+    NFL seasons typically start in September and end in February.
+    """
+    if today is None:
+        today = dt.today()
+    year = today.year
+    # If before September, it's still the previous season
+    if today.month < 9:
+        return year - 1
+    return year
+
 # ---------- Lambda Entrypoint ----------
 
 def lambda_handler(event, context):
+    currentSeason = get_nfl_season()
     run_id = datetime.now(timezone.utc).isoformat()
     messages = []
 
@@ -92,14 +110,17 @@ def lambda_handler(event, context):
             if not name:
                 continue
 
+            # TODO: Need to modify the message to match what verify and extract expects
+
             messages.append({
-                "team": team,
-                "position": pos,
-                "player_name": name,
+                "TEAM_NAME": team,
+                "PLAYER_POSITION": pos[:2].upper(),
+                "PLAYER_NAME": name,
                 "status": status,
                 "source": "depthcharts",
                 "depth_row_key": row.get("key"),
                 "run_id": run_id,
+                "currentSeason": currentSeason,
             })
 
     # Send to SQS in batches of 10
@@ -110,7 +131,7 @@ def lambda_handler(event, context):
         for msg in batch:
             counter += 1
             entries.append({
-                "Id": f"{msg['team']}-{msg['position']}-{counter}",
+                "Id": f"{msg['TEAM_NAME']}-{msg['PLAYER_POSITION']}-{counter}",
                 "MessageBody": json.dumps(msg),
             })
         sqs.send_message_batch(QueueUrl=QUEUE_URL, Entries=entries)
