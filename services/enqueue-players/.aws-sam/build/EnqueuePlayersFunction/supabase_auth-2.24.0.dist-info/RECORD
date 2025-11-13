@@ -21,7 +21,7 @@ supabase_auth/helpers.py,sha256=p3ulmG2ALDlH_2i2fcZZh9wcz2tA_yct3-xjRS1hgaM,9161
 supabase_auth/py.typed,sha256=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU,0
 supabase_auth/timer.py,sha256=YiN03_Nq1wYXkTLSShSjssMebkUWwjwnGlC4vCR5rfw,1414
 supabase_auth/types.py,sha256=WIDcB54PDNfSqIUurB9L4tKRBO6xuFeczO7IkLaqKYk,27002
-supabase_auth/version.py,sha256=6hDkaXsPXhLAPjgBOXS99w1lKBrbZmCYmLRMo_UR_uM,53
-supabase_auth-2.23.3.dist-info/WHEEL,sha256=eh7sammvW2TypMMMGKgsM83HyA_3qQ5Lgg3ynoecH3M,79
-supabase_auth-2.23.3.dist-info/METADATA,sha256=-_sE1u0NHahHnBbHKXZS33JHRHxb0OhVUBDvCCGn2H0,6395
-supabase_auth-2.23.3.dist-info/RECORD,,
+supabase_auth/version.py,sha256=e5CjvfLtqmm-RuKNCiNj3NbVJC5a6_48l0PwPswkCIc,53
+supabase_auth-2.24.0.dist-info/WHEEL,sha256=eh7sammvW2TypMMMGKgsM83HyA_3qQ5Lgg3ynoecH3M,79
+supabase_auth-2.24.0.dist-info/METADATA,sha256=ZB-E_P9esG_XukI_nTYtZG3XWMj1bfRmj4yniSc0OW0,6395
+supabase_auth-2.24.0.dist-info/RECORD,,

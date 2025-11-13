@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: storage3
-Version: 2.23.3
+Version: 2.24.0
 Summary: Supabase Storage client for Python.
 Author: Joel Lee, Leon Fedden, Daniel Reinón García, Leynier Gutiérrez González, Anand Krishna
 Author-email: Joel Lee <joel@joellee.org>, Leon Fedden <leonfedden@gmail.com>, Daniel Reinón García <danielreinon@outlook.com>, Leynier Gutiérrez González <leynier41@gmail.com>, Anand Krishna <anand2312@proton.me>

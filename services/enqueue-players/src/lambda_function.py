@@ -1,7 +1,7 @@
 import os
 import json
 import boto3
-from datetime import datetime, timezone
+from datetime import datetime, timezone, timedelta
 from datetime import datetime as dt
 from itertools import islice
 from supabase import create_client, Client
@@ -25,6 +25,8 @@ POSITION_COLS = [
 ]
 
 TABLE = "DepthCharts"
+PLAYER_METADATA_TABLE = "PlayerMetaData"
+RECENT_UPDATE_WINDOW_DAYS = 3
 
 # ---------- Helpers ----------
 
@@ -76,6 +78,55 @@ def _latest_row_for_team(team: str):
     rows = res.data or []
     return rows[0] if rows else None
 
+def _parse_timestamp(value):
+    if not value:
+        return None
+    if isinstance(value, datetime):
+        return value if value.tzinfo else value.replace(tzinfo=timezone.utc)
+    if isinstance(value, str):
+        cleaned = value.strip()
+        if cleaned.endswith("Z"):
+            cleaned = cleaned[:-1] + "+00:00"
+        try:
+            parsed = datetime.fromisoformat(cleaned)
+        except ValueError:
+            return None
+        return parsed if parsed.tzinfo else parsed.replace(tzinfo=timezone.utc)
+    return None
+
+def _player_recently_updated(name, team, position, cutoff_ts, cache):
+    key = (name, team, position)
+    if key in cache:
+        return cache[key]
+
+    query = (
+        sb.table(PLAYER_METADATA_TABLE)
+        .select("*")
+        .eq("Player Name", name)
+        .order("updated_at", desc=True)
+        .limit(5)
+    )
+    res = query.execute()
+    rows = res.data or []
+
+    normalized_team = (team or "").strip().lower()
+    normalized_position = (position or "").strip().upper()
+
+    target_row = None
+    for row in rows:
+        row_team = (row.get("Team") or "").strip().lower()
+        row_position = (row.get("ESPN Roster Position") or "").strip().upper()
+        if row_team == normalized_team and row_position == normalized_position:
+            target_row = row
+            break
+    if not target_row and rows:
+        target_row = rows[0]
+
+    updated_dt = _parse_timestamp(target_row.get("updated_at")) if target_row else None
+    is_recent = bool(updated_dt and updated_dt >= cutoff_ts)
+    cache[key] = is_recent
+    return is_recent
+
 def get_nfl_season(today=None):
     """
     Returns the NFL season year as an integer for a given date.
@@ -96,6 +147,8 @@ def lambda_handler(event, context):
     currentSeason = get_nfl_season()
     run_id = datetime.now(timezone.utc).isoformat()
     messages = []
+    recent_cutoff = datetime.now(timezone.utc) - timedelta(days=RECENT_UPDATE_WINDOW_DAYS)
+    recent_update_cache = {}
 
     teams = _distinct_teams()
     for team in teams:
@@ -109,12 +162,16 @@ def lambda_handler(event, context):
             name, status = _coerce_to_name_status(row[pos])
             if not name:
                 continue
+            player_position = pos[:2].upper()
+
+            if _player_recently_updated(name, team, player_position, recent_cutoff, recent_update_cache):
+                continue
 
             # TODO: Need to modify the message to match what verify and extract expects
 
             messages.append({
                 "TEAM_NAME": team,
-                "PLAYER_POSITION": pos[:2].upper(),
+                "PLAYER_POSITION": player_position,
                 "PLAYER_NAME": name,
                 "status": status,
                 "source": "depthcharts",

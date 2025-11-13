@@ -15,7 +15,7 @@ realtime/py.typed,sha256=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU,0
 realtime/transformers.py,sha256=-PVDpU5r6fDsrbpYw7rStf4nWwSjopS79gNAv53qUuc,273
 realtime/types.py,sha256=lg3_qL2eVIwaJBDRqJ_2lv4pIyF432kQLf1n5Ytxq9w,5801
 realtime/utils.py,sha256=qqUWg7X4x310-Pjz9Nv75D8lmWXr825yVv9cqJEB7l4,135
-realtime/version.py,sha256=6hDkaXsPXhLAPjgBOXS99w1lKBrbZmCYmLRMo_UR_uM,53
-realtime-2.23.3.dist-info/METADATA,sha256=-H7pPEORMhOsrXJzYTXEL_tN7dGP3Vm21olG-T0vaP4,7027
-realtime-2.23.3.dist-info/WHEEL,sha256=zp0Cn7JsFoX2ATtOhtaFYIiE2rmFAD4OcMhtUki8W3U,88
-realtime-2.23.3.dist-info/RECORD,,
+realtime/version.py,sha256=e5CjvfLtqmm-RuKNCiNj3NbVJC5a6_48l0PwPswkCIc,53
+realtime-2.24.0.dist-info/METADATA,sha256=akPMAU9lBsKqH8uzanYbrsCxsndQnlAkJQZS6QfVxSY,7027
+realtime-2.24.0.dist-info/WHEEL,sha256=zp0Cn7JsFoX2ATtOhtaFYIiE2rmFAD4OcMhtUki8W3U,88
+realtime-2.24.0.dist-info/RECORD,,

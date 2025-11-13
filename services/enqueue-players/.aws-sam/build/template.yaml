@@ -59,8 +59,8 @@ Resources:
           Type: Schedule
           Properties:
             Name: enqueue-daily
-            Description: Run enqueue lambda once per day
-            Schedule: cron(0 5 * * ? *)
+            Description: Run enqueue lambda on Thu/Sat/Sun at 05:00 UTC
+            Schedule: cron(0 5 ? * THU,SAT,SUN *)
             Enabled: true
       CodeUri: EnqueuePlayersFunction
     Metadata:
