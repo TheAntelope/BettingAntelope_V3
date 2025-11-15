@@ -164,9 +164,31 @@ def lambda_handler(event, context):
                 continue
             player_position = pos[:2].upper()
 
+            # determine if this player should be enqueued
+            should_enqueue = True
+
+            # normally skip if recently updated
             if _player_recently_updated(name, team, player_position, recent_cutoff, recent_update_cache):
+                should_enqueue = False
+
+            # override: if match_verification is explicitly FALSE, always enqueue
+            # adjust key names below if your table uses a different column name
+            mv = row.get("match_verification") if isinstance(row, dict) else None
+            if mv is None:
+                # try common alternative column names
+                mv = row.get("Match Verification") or row.get("matchVerification") or row.get("match_verified")
+            mv_norm = None
+            if isinstance(mv, str):
+                mv_norm = mv.strip().lower()
+            else:
+                mv_norm = mv
+            if mv_norm in (False, 0, "false", "0"):
+                should_enqueue = True
+
+            if not should_enqueue:
                 continue
 
+            
             # TODO: Need to modify the message to match what verify and extract expects
 
             messages.append({

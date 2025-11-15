@@ -124,11 +124,6 @@ def lambda_handler(event, context):
 
 
 if __name__ == '__main__':
-    sample_event = {
-        'PLAYER_NAME': 'Josh Allen',
-        'TEAM_NAME': 'BUF',
-        'PLAYER_POSITION': 'QB',
-        'currentSeason': 2025,
-        'status': 'Healthy',
-    }
+    with open("..\event.json","r",encoding="utf-8") as f:
+        sample_event = json.load(f)
     lambda_handler(sample_event, None)

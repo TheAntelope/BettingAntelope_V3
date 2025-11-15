@@ -7,11 +7,14 @@ import pickle
 import boto3
 import time
 import sys
+import cloudscraper
+from typing import Optional, Dict
+import re
 # append utils to sys path
 sys.path.append("/antelope_utils")
 from antelope_utils.data_prep_utils import rename_team_str
 import pandas as pd
-print(pd.__version__)
+
 
 def get_player_metadata(name, increment):
     """# 
@@ -24,18 +27,25 @@ def get_player_metadata(name, increment):
     url_str = 'https://www.pro-football-reference.com/players/' + LastInitial + '/' + NameKey + '/gamelog/'
     
     #get soup from url to get meta data
-    page = requests.get(url_str)
-    print(page)
-    soup = BeautifulSoup(page.content, "html.parser")
+    # page = requests.get(url_str)
+    # print(page)
+    # soup = BeautifulSoup(page.content, "html.parser")
+    # print(soup)
     
-    #scrape player meta data
-    player_dict = scrape_player_meta_data(soup, name, url_str)
+    #scrape player meta data (old version)
+    # player_dict = scrape_player_meta_data(soup, name, url_str)
+
+    player_dict = extract_player_header(url_str)
+    print('Scraped Player Meta Data from NFL Ref:', player_dict)
+
+    player_dict['Team'] = rename_team_str(player_dict['Team'])
     
     # add url to the player log
-    player_dict['url'] = url_str
+    # player_dict['url'] = url_str
     
     return player_dict
 
+# mark for deletion if everything works with new function
 def scrape_player_meta_data(soup, name, url_str):   
     
     """
@@ -55,6 +65,7 @@ def scrape_player_meta_data(soup, name, url_str):
     """
     
     result = soup.find_all("div", id="info")
+    print(result)
     
     
     try: 
@@ -221,6 +232,7 @@ def verify_player_data_source(roster_name, roster_position, roster_team, scraped
     return match_dict['Status'], match_dict['Name_Matched'], match_dict['Position_Matched'], match_dict['Team_Matched'], match_dict['LevenshteinDistance']
 
 def verify_roster(roster_df_in, TEAM_NAME, currentSeason, currentWeek):
+
     """
     Verifies roster collected from espn against player logs on football reference
     
@@ -303,3 +315,69 @@ def verify_roster(roster_df_in, TEAM_NAME, currentSeason, currentWeek):
     s3.Bucket('antelope').put_object(Key=(key+latest_save_str), Body=pickle_byte_obj)
     
     return roster_df_out
+
+def extract_player_header(url: str, html: Optional[str] = None, timeout: int = 15) -> Dict[str, Optional[str]]:
+    """
+    Return {'Name', 'Position', 'Team', 'url'} from a PFR player gamelog URL.
+    If html is provided it will be parsed directly; otherwise the page is fetched with cloudscraper.
+    """
+    if html is None:
+        scraper = cloudscraper.create_scraper()
+        r = scraper.get(url, timeout=timeout)
+        r.raise_for_status()
+        html = r.text
+
+    soup = BeautifulSoup(html, "lxml")
+
+    # Name: usually in <h1 itemprop="name"> or first <h1>
+    name_tag = soup.find("h1", attrs={"itemprop": "name"}) or soup.find("h1")
+    name = name_tag.get_text(strip=True) if name_tag else None
+
+    position = None
+    team = None
+
+    # Meta block contains Position and Team info
+    meta = soup.select_one("#meta")
+    if meta:
+        # Try paragraphs in #meta
+        for p in meta.find_all("p"):
+            text = p.get_text(" ", strip=True)
+            # Position: ... (e.g. "Position: RB")
+            m = re.search(r"Position[:\s]*([A-Za-z0-9/ ,]+)", text)
+            if m and not position:
+                position = m.group(1).strip()
+            # Team: ... (there will usually be an <a> to the team page)
+            if "Team" in text and not team:
+                a = p.find("a")
+                if a:
+                    team = a.get_text(strip=True)
+                else:
+                    # fallback: take text after 'Team'
+                    parts = text.split("Team")
+                    if len(parts) > 1:
+                        team = parts[-1].replace(":", "").strip()
+
+    # Fallback: look for a link to /teams/ anywhere
+    if not team:
+        team_link = soup.select_one("a[href*='/teams/']")
+        if team_link:
+            team = team_link.get_text(strip=True)
+
+    # Fallback for position: small labels or 'POSITION' text
+    if not position:
+        pos_tag = soup.find(string=re.compile(r"\b(Position|Pos)\b", re.I))
+        if pos_tag:
+            # try to grab following text
+            parent = pos_tag.parent
+            if parent:
+                txt = parent.get_text(" ", strip=True)
+                m = re.search(r"(Position|Pos)[:\s]*([A-Za-z0-9/ ,]+)", txt, re.I)
+                if m:
+                    position = m.group(2).strip()
+
+    return {
+        "Name": name or "NA",
+        "Position": position or "NA",
+        "Team": team or "NA",
+        "url": url
+    }

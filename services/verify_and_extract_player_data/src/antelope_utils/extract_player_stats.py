@@ -39,8 +39,15 @@ def verify_player(name, position, team):
         time.sleep(sleep_time)
         number_str = '0' + str(increment)
         increment += 1
+        if increment > 9:
+            number_str = str(increment)
         # get player meta data
         player_dict = get_player_metadata(name, number_str)
+
+        if player_dict['Position'] == "relative":
+            player_dict['Position'] = position
+
+        print('player_dict:', player_dict)
 
         # verify the scrape
         match_verification = verify_player_data_source(
@@ -50,7 +57,7 @@ def verify_player(name, position, team):
         player_dict['match_verification'] = match_verification
 
         # break the while loop just in case
-        if increment > 12:
+        if increment > 16:
             player_dict['Name'] = None
             player_dict['Position'] = None
             player_dict['Team'] = None
@@ -482,8 +489,6 @@ def clean_player_name(name):
 
     return name
 
-
-
 def nfl_season_from_date(date_str: str) -> int:
     """
     Convert a date string (YYYY-MM-DD) to the NFL season year.
@@ -496,8 +501,6 @@ def nfl_season_from_date(date_str: str) -> int:
         return date.year - 1
     else:
         return date.year
-
-
 
 ### Calc team
 def calc_team(team, currentSeason, roster_df, meta_data_dict):
