@@ -80,9 +80,11 @@ def extract_stat_from_bookmaker_dict(bookmakers, book, stat, team):
         return price, point
 
     elif stat == 'totals':
-        price = outcomes_df[outcomes_df['name'] == 'Over']['price'].values[0]
-        point = outcomes_df[outcomes_df['name'] == 'Over']['point'].values[0]
-        return price, point 
+        over_price = outcomes_df[outcomes_df['name'] == 'Over']['price'].values[0]
+        over_point = outcomes_df[outcomes_df['name'] == 'Over']['point'].values[0]
+        under_price = outcomes_df[outcomes_df['name'] == 'Under']['price'].values[0]
+        under_point = outcomes_df[outcomes_df['name'] == 'Under']['point'].values[0]
+        return over_price, over_point, under_price, under_point
 
     elif stat == 'spreads':
         point = outcomes_df[outcomes_df['name'] == team]['point'].values[0]

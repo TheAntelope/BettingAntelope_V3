@@ -19,6 +19,12 @@ Resources:
           SUPABASE_SERVICE_KEY: eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Im9tYnVoY211dHR0eHhqc3lqZXJmIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NTU5NzUxNTUsImV4cCI6MjA3MTU1MTE1NX0._SsqZCRWM-e77gqxsrZSuw1OPvIIpYxFoNFsPkBx_Gc
           SUPABASE_URL: https://ombuhcmutttxxjsyjerf.supabase.co
       PackageType: Zip
+      Events:
+        QuadDailySchedule:
+          Type: Schedule
+          Properties:
+            Schedule: rate(6 hours)
+            Name: scrapeodds-quad-4x-daily
       Policies:
       - Statement:
         - Effect: Allow
