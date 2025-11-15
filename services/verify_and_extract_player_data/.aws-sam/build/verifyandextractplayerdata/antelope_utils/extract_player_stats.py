@@ -200,7 +200,24 @@ def remove_player_went_from(df: pd.DataFrame, column: str) -> pd.DataFrame:
         pd.DataFrame: Cleaned DataFrame with rows removed
     """
     print("extract_player_stats: removing player went from")
-    mask = ~df[column].str.startswith("Player went from ", na=False)
+    if column not in df.columns:
+        print(f"extract_player_stats: column {column} not in dataframe; skipping removal")
+        return df
+
+    # Coerce to string to avoid errors for non-string values
+    col_series = df[column].astype(str)
+
+    # Boolean mask of rows that start with the prefix
+    starts_mask = col_series.str.startswith("Player went from ", na=False)
+
+    # If no rows match, return original df
+    if not starts_mask.any():
+        print("extract_player_stats: no 'Player went from ' entries found; nothing to remove")
+        return df
+
+    # Otherwise remove matching rows and reset index
+    mask = ~starts_mask
+    print("extract_player_stats: removed player went from")
     return df[mask].reset_index(drop=True)
 
 def clean_player_log(df, meta_data_dict, position):

@@ -12,7 +12,7 @@ postgrest/exceptions.py,sha256=3aGUMf86WZSOTsZgtixkKS2JqPtdIQNMgOH23Flhb9o,1892
 postgrest/py.typed,sha256=47DEQpj8HBSa-_TImW-5JCeuQeRkm5NMpJWZG3hSuFU,0
 postgrest/types.py,sha256=HZNF49H2kWXmsfaZ9LvfV_bJXPYC21XpY0WYGE8f3DY,1453
 postgrest/utils.py,sha256=iDp8bLAsJWVZ4G90ZBa7XX420R80E3aTVMSCh-09cgE,1584
-postgrest/version.py,sha256=HBlcA59m54OFD8AdNrqXWYI_2McFLdVYtfu3lyOZl-I,53
-postgrest-2.23.2.dist-info/WHEEL,sha256=eh7sammvW2TypMMMGKgsM83HyA_3qQ5Lgg3ynoecH3M,79
-postgrest-2.23.2.dist-info/METADATA,sha256=way1S95wXJiK8JRAR42egbru4c5NtK0bs4FpjLEJThM,3378
-postgrest-2.23.2.dist-info/RECORD,,
+postgrest/version.py,sha256=e5CjvfLtqmm-RuKNCiNj3NbVJC5a6_48l0PwPswkCIc,53
+postgrest-2.24.0.dist-info/WHEEL,sha256=eh7sammvW2TypMMMGKgsM83HyA_3qQ5Lgg3ynoecH3M,79
+postgrest-2.24.0.dist-info/METADATA,sha256=Dl-rhngK3JfJ6fK7_QB8VtFCN0oJo1xzp18WKhrXQG0,3378
+postgrest-2.24.0.dist-info/RECORD,,

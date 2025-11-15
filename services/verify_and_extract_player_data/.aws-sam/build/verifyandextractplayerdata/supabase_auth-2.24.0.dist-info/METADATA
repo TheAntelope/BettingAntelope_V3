@@ -1,6 +1,6 @@
 Metadata-Version: 2.4
 Name: supabase-auth
-Version: 2.23.2
+Version: 2.24.0
 Summary: Python Client Library for Supabase Auth
 Author: Joel Lee
 Author-email: Joel Lee <joel@joellee.org>
