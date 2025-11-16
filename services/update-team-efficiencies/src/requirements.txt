@@ -1,0 +1,12 @@
+# Third-party dependencies for the depth chart scraping Lambda.
+supabase
+pandas
+lxml
+requests
+beautifulsoup4
+bs4
+boto3
+python-Levenshtein
+cloudscraper
+PyYAML
+python-dotenv

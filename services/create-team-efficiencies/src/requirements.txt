@@ -1,8 +1,0 @@
-# Third-party dependencies for the depth chart scraping Lambda.
-supabase
-pandas
-lxml
-requests
-bs4
-boto3
-

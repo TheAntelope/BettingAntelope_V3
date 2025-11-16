@@ -1,0 +1,133 @@
+PassingYards:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0: 'Passing'
+    player_log_level_1: 'Yds'
+    calculated: False
+    efficiency: 'on'
+    efficiencyDenominator: "OffensiveSnapsPlayed"
+RushingYards:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0: 'Rushing'
+    player_log_level_1: 'Yds'
+    calculated: False
+    efficiency: 'on'
+    efficiencyDenominator: "OffensiveSnapsPlayed"
+RushingTDs:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0: 'Rushing'
+    player_log_level_1: 'TD'
+    calculated: False
+    efficiency: off
+    efficiencyDenominator: False
+ReceivingTDs:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0: 'Receiving'
+    player_log_level_1: 'TD'
+    calculated: False
+    efficiency: off
+    efficiencyDenominator: False
+PassingTDs:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0: 'Passing'
+    player_log_level_1: 'TD'
+    calculated: False
+    efficiency: off
+    efficiencyDenominator: False
+ReceivingYards:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0: 'Receiving'
+    player_log_level_1: 'Yds'
+    calculate_efficiency: True
+    calculated: False
+    efficiency: 'on'
+    efficiencyDenominator: "OffensiveSnapsPlayed"
+OffensiveSnapsPlayed:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0:  'Snap Counts'
+    player_log_level_1: 'OffSnp'
+    calculated: False
+    efficiency: 'off'
+    efficiencyDenominator: False
+DefensiveSnapsPlayed:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0:  'Snap Counts'
+    player_log_level_1: 'DefSnp'
+    calculated: False
+    efficiency: 'off'
+    efficiencyDenominator: False
+SoloTackles:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0:  'Tackles'
+    player_log_level_1: 'Solo'
+    calculated: False
+    efficiency: 'on'
+    efficiencyDenominator: "DefensiveSnapsPlayed"
+AssistedTackles:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0:  'Tackles'
+    player_log_level_1: 'Ast'
+    calculated: False
+    efficiency: 'on'
+    efficiencyDenominator: "DefensiveSnapsPlayed"
+PassesDefended:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0:  'Def Interceptions'
+    player_log_level_1: 'PD'
+    calculated: False
+    efficiency: 'on'
+    efficiencyDenominator: "DefensiveSnapsPlayed"
+Sacks:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0:  'Tackles'
+    player_log_level_1: 'Sk'
+    calculated: False
+    efficiency: 'on'
+    efficiencyDenominator: "DefensiveSnapsPlayed"
+QBHits:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0:  'Tackles'
+    player_log_level_1: 'QBHits'
+    calculated: False
+    efficiency: 'on'
+    efficiencyDenominator: "DefensiveSnapsPlayed"
+Interceptions:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0:  'Def Interceptions'
+    player_log_level_1: 'Int'
+    calculated: False
+    efficiency: 'on'
+    efficiencyDenominator: "DefensiveSnapsPlayed"
+ForcedFumbles:
+    type: 'float'
+    stat_level: 'player'
+    player_log_level_0:  'Fumbles'
+    player_log_level_1: 'FF'
+    calculated: False
+    efficiency: 'on'
+    efficiencyDenominator: "DefensiveSnapsPlayed"
+Season:
+    type: 'float'
+    stat_level: 'game'
+    player_log_level_0: 'level_0'
+    player_log_level_1: 'Year'
+    calculated: False
+    efficiency: off
+    efficiencyDenominator: False
+Positions:
+    type: 'list'
+    stat_level: 'meta'
+    values: ['QB', 'RB', 'WR', 'TE', 'CB/SS', 'DE/LB']
