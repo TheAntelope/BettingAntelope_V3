@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Weekly job that recalculates player ELOs for Antelope.
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 120
+    MemorySize: 256
+    Architectures:
+      - arm64
+
+Resources:
+  GetElosFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: get-elos
+      CodeUri: src
+      Handler: lambda_function.lambda_handler
+      Description: Compute or retrieve player ELO ratings for downstream systems.
+      Events:
+        WeeklySchedule:
+          Type: Schedule
+          Properties:
+            Name: get-elos-weekly
+            Description: Invoke every Thursday at 01:00 UTC (weekly ELO refresh)
+            Schedule: cron(0 1 ? * THU *)
+            Enabled: true
+
+Outputs:
+  GetElosFunctionArn:
+    Description: ARN of the get-elos Lambda function
+    Value: !GetAtt GetElosFunction.Arn
+  GetElosFunctionName:
+    Description: Name of the get-elos Lambda
+    Value: !Ref GetElosFunction

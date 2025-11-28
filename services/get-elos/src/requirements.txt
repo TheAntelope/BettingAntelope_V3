@@ -1,0 +1,5 @@
+html5lib
+pandas
+boto3
+supabase
+requests
