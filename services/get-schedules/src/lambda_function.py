@@ -8,6 +8,8 @@ import supabase
 import pandas as pd
 from datetime import datetime as dt
 import requests
+from antelope_utils.supabase_utils import read_schedule_from_supabase
+
 
 
 LOGGER = logging.getLogger()
@@ -25,7 +27,7 @@ def lambda_handler(event, context):
     week = convert_date_to_nfl_week(dt.now())
     print('Week Number:',week)
 
-    season = 2025
+    season = get_nfl_season()
     currentWeek = week
 
     if week == 19:

@@ -1,0 +1,2 @@
+# Add any additional dependencies for update-team-stats below.
+boto3

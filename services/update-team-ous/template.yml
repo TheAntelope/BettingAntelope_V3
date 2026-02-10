@@ -1,0 +1,36 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Transform: AWS::Serverless-2016-10-31
+Description: Weekly job that refreshes team statistics for Antelope.
+
+Globals:
+  Function:
+    Runtime: python3.12
+    Timeout: 120
+    MemorySize: 256
+    Architectures:
+      - arm64
+
+Resources:
+  UpdateTeamOUsFunction:
+    Type: AWS::Serverless::Function
+    Properties:
+      FunctionName: update-team-ous
+      CodeUri: src
+      Handler: lambda_function.lambda_handler
+      Description: Refresh aggregated team statistics for downstream consumers.
+      Events:
+        WeeklySchedule:
+          Type: Schedule
+          Properties:
+            Name: update-team-ous-weekly
+            Description: Invoke every Thursday at 01:00 UTC (team OUs refresh)
+            Schedule: cron(0 1 ? * THU *)
+            Enabled: true
+
+Outputs:
+  UpdateTeamStatsFunctionArn:
+    Description: ARN of the update-team-ous Lambda function
+    Value: !GetAtt UpdateTeamOUsFunction.Arn
+  UpdateTeamStatsFunctionName:
+    Description: Name of the update-team-ous Lambda
+    Value: !Ref UpdateTeamOUsFunction
